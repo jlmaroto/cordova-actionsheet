@@ -21,8 +21,8 @@
 			</feature>
 		</config-file>
 
-		<header-file src="ActionSheet.h" />
-		<source-file src="ActionSheet.m" />
+		<header-file src="src/ios/ActionSheet.h" />
+		<source-file src="src/ios/ActionSheet.m" />
 	</platform>
 
 </plugin>
