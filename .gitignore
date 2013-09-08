@@ -1,6 +1,2 @@
-DerivedData/
-build/
-xcuserdata
 .DS_Store
-samples/ios/ActionSheet
 !.gitignore
