@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin
-	xmlns="http://apache.org/cordova/ns/plugins/1.0"
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	id="com.phonegap.plugins.actionsheet"
 	version="1.0.0">
@@ -9,9 +8,17 @@
 	<description>ActionSheet Plugin</description>
 	<license>MIT</license>
 
-  <js-module src="www/ActionSheet.js" name="ActionSheet">
-        <clobbers target="ActionSheet" />
-    </js-module>
+	<js-module src="www/ActionSheet.js" name="ActionSheet">
+		<clobbers target="ActionSheet" />
+	</js-module>
+
+	<platform name="android">
+		<config-file target="res/xml/config.xml" parent="/*">
+			<feature name="ActionSheet" >
+				<param name="android-package" value="com.phonegap.plugins.actionsheet"/>
+			</feature>
+		</config-file>
+	</platform>
 
 	<!-- ios -->
 	<platform name="ios">
