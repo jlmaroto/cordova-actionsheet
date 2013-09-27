@@ -12,10 +12,11 @@ var ActionSheet = function() {}
 
 ActionSheet.prototype.create = function(options, callback) {
 
-	$("#uberwrapper").prepend('<div id="actionsheet" style="display:none;position:absolute;z-index:500000000;width:100%;text-align:center;"></div>');
-	document.getElementById("actionsheet").style.marginTop =  (document.documentElement.clientHeight + 44 )+'px';
-
 	if(/android/i.test(navigator.userAgent)){
+
+		$("#uberwrapper").prepend('<div id="actionsheet" style="display:none;position:absolute;z-index:500000000;width:100%;text-align:center;"></div>');
+		document.getElementById("actionsheet").style.marginTop =  (document.documentElement.clientHeight + 44 )+'px';
+
 		options || (options = {});
 		var scope = options.scope || null;
 
@@ -66,7 +67,7 @@ ActionSheet.prototype.create = function(options, callback) {
 				result.buttonIndex = id;
 				result.buttonValue = $(e.currentTarget).text();
 				if(id == config.cancelButtonIndex)
-					$('#ActionSheet').hide();
+					$('#ActionSheet').remove();
 
 				return _callback(result);
 
