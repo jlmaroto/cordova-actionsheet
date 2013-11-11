@@ -15,9 +15,40 @@
 	<platform name="android">
 		<config-file target="res/xml/config.xml" parent="/*">
 			<feature name="ActionSheet" >
-				<param name="android-package" value="com.phonegap.plugins.actionsheet"/>
+				<param name="android-package" value="com.phonegap.plugins.actionsheet.Plugin"/>
 			</feature>
 		</config-file>
+		<source-file src="src/android/com/phonegap/plugins/actionsheet/Plugin.java"
+			           target-dir="src/com/phonegap/plugins/actionsheet" />
+		<source-file src="src/android/com/phonegap/plugins/actionsheet/CordovaContextMenu.java"
+			           target-dir="src/com/phonegap/plugins/actionsheet" />
+		<info>
+			Manual configuration of your DroidGap subclass is required
+
+      Append the methods:
+		    /*
+		     * Hook in Cordova for context menu plugins
+		     *
+		     */
+		    @Override
+		    public boolean onContextItemSelected(MenuItem item) {
+		    	this.postMessage("onContextItemSelected", item);
+		        return true;
+		    }
+		    @Override
+		    public void onContextMenuClosed(Menu menu) {
+		    	this.postMessage("onContextMenuCosed", menu);
+		    }
+		    @Override
+		    public void onCreateContextMenu(ContextMenu menu, View view,
+		                                    ContextMenuInfo menuInfo) {
+		    	Map&lt;String, Object&gt; params = new HashMap(3);
+		    	params.put("menu", menu);
+		    	params.put("view", view);
+		    	params.put("menuIndo", menuInfo);
+		    	this.postMessage("onCreateContextMenu", params);
+		    }
+		</info>
 	</platform>
 
 	<!-- ios -->
