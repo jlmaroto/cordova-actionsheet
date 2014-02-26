@@ -8,6 +8,40 @@ updated by [Etienne Adriaenssen] for Phonegap 3.0 using the command phonegap plu
 
 * This plugin is built for Cordova >= v3.0.0 with ARC.
 
+## USAGE ##
+```javascript
+ // Basic with title
+window.plugins.actionSheet.create({title: 'Title', items: ['Foo', 'Bar']}, function(buttonValue, buttonIndex) {
+    console.warn('create(), arguments=' + Array.prototype.slice.call(arguments).join(', '));
+});
+
+
+# Cordova ActionSheet Plugin #
+by [Olivier Louvignes](http://olouv.com)
+updated by [Etienne Adriaenssen] for Phonegap 3.0
+updated by [Benjamin Horner] for Phonegap 3.0
+
+## DESCRIPTION ##
+
+* This plugin provides a simple way to use the `UIActionSheet` native component from iOS.
+
+* This plugin is built for Cordova >= v3.0.0 with ARC.
+
+## USAGE ##
+CLI : cordova plugin add https://github.com/benjaminhorner/cordova-actionsheet.git
+
+```javascript
+// After device ready
+// Basic with title
+window.plugins.actionSheet.create({title: 'Title', items: ['Foo', 'Bar']}, function(buttonValue, buttonIndex) {
+    console.warn('create(), arguments=' + Array.prototype.slice.call(arguments).join(', '));
+});
+
+// Complex
+window.plugins.actionSheet.create({items: ['Add', 'Delete', 'Cancel'], destructiveButtonIndex: 1, cancelButtonIndex: 2}, function(buttonValue, buttonIndex) {
+    console.warn('create(), arguments=' + Array.prototype.slice.call(arguments).join(', '));
+});
+
 ## LICENSE ##
 
     The MIT License
@@ -38,3 +72,4 @@ Contributors :
 
 * [Olivier Louvignes](http://olouv.com), author.
 * [Etienne Adriaenssen](http://poutsch.com), update-or.
+* [Benjamin Horner](http://www.benjamin-horner.fr), update-or.
