@@ -33,7 +33,7 @@ window.plugins.actionSheet.create({title: 'Title', items: ['Foo', 'Bar']}, funct
 window.plugins.actionSheet.create({items: ['Add', 'Delete', 'Cancel'], destructiveButtonIndex: 1, cancelButtonIndex: 2}, function(buttonValue, buttonIndex) {
     console.warn('create(), arguments=' + Array.prototype.slice.call(arguments).join(', '));
 });
-```javascript
+javascript```
 
 ## LICENSE ##
 
