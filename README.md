@@ -8,14 +8,6 @@ updated by [Etienne Adriaenssen] for Phonegap 3.0 using the command phonegap plu
 
 * This plugin is built for Cordova >= v3.0.0 with ARC.
 
-## USAGE ##
-```javascript
- // Basic with title
-window.plugins.actionSheet.create({title: 'Title', items: ['Foo', 'Bar']}, function(buttonValue, buttonIndex) {
-    console.warn('create(), arguments=' + Array.prototype.slice.call(arguments).join(', '));
-});
-
-
 # Cordova ActionSheet Plugin #
 by [Olivier Louvignes](http://olouv.com)
 updated by [Etienne Adriaenssen] for Phonegap 3.0
@@ -41,6 +33,7 @@ window.plugins.actionSheet.create({title: 'Title', items: ['Foo', 'Bar']}, funct
 window.plugins.actionSheet.create({items: ['Add', 'Delete', 'Cancel'], destructiveButtonIndex: 1, cancelButtonIndex: 2}, function(buttonValue, buttonIndex) {
     console.warn('create(), arguments=' + Array.prototype.slice.call(arguments).join(', '));
 });
+```javascript
 
 ## LICENSE ##
 
