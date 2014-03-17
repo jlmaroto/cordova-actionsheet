@@ -12,6 +12,10 @@
 		<clobbers target="ActionSheet" />
 	</js-module>
 
+	<engines>
+		<engine name="cordova" version=">=3.1.0" />
+	</engines>
+
 	<platform name="android">
 		<config-file target="res/xml/config.xml" parent="/*">
 			<feature name="ActionSheet" >
@@ -53,7 +57,7 @@
 
 	<!-- ios -->
 	<platform name="ios">
-		<config-file target="config.xml" parent="/widget/plugins">
+		<config-file target="config.xml" parent="/*">
 			<feature name="ActionSheet">
 				<param name="ios-package" value="ActionSheet"/>
 			</feature>
