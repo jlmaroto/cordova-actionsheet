@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class CordovaContextMenu extends CordovaPlugin {
 
-  public ActionSheet() {
+  public CordovaContextMenu() {
     super();
   }
 
