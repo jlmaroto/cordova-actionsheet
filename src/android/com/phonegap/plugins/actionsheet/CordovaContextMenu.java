@@ -32,10 +32,16 @@ public class CordovaContextMenu extends CordovaPlugin {
 
       String title = options.optString("title");
       JSONArray buttons = options.optJSONArray("items");
-
-      boolean androidEnableCancelButton = options.optBoolean("androidEnableCancelButton", false);
-
+      
+      boolean androidEnableCancelButton=false;
       String addCancelButtonWithLabel = options.optString("addCancelButtonWithLabel");
+      
+      if(!options.optNumber("cancelButtonIndex",-1).equals(-1)){
+        androidEnableCancelButton=true;
+        addCancelButtonWithLabel = buttons[options.optNumber("cancelButtonIndex",-1)];
+      }
+      boolean androidEnableCancelButton = options.optBoolean("androidEnableCancelButddton", false);
+
       String addDestructiveButtonWithLabel = options.optString("addDestructiveButtonWithLabel");
 
       this.show(title, buttons, addCancelButtonWithLabel,
