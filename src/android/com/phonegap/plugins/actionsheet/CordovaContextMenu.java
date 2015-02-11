@@ -1,58 +1,159 @@
 package com.phonegap.plugins.actionsheet;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.text.TextUtils;
 import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaActivity;
-import org.apache.cordova.CordovaArgs;
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CordovaContextMenu {
-    private CordovaActivity cordova;
-    private JSONObject options;
-    private CallbackContext callbackContext;
+/**
+ * @author Original excellent PR by: Brill Pappin
+ * @author Mantainer of the code: Eddy Verbruggen
+ */
+public class CordovaContextMenu extends CordovaPlugin {
 
-    public CordovaContextMenu(CordovaActivity cordova, CordovaArgs args,
-            CallbackContext callbackContext) throws JSONException {
-        this.cordova = cordova;
-        this.options = args.getJSONObject(0);
-        this.callbackContext = callbackContext;
+  public ActionSheet() {
+    super();
+  }
+
+  public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+
+    if ("create".equals(action)) {
+      JSONObject options = args.optJSONObject(0);
+
+      String title = options.optString("title");
+      JSONArray buttons = options.optJSONArray("items");
+
+      boolean androidEnableCancelButton = options.optBoolean("androidEnableCancelButton", false);
+
+      String addCancelButtonWithLabel = options.optString("addCancelButtonWithLabel");
+      String addDestructiveButtonWithLabel = options.optString("addDestructiveButtonWithLabel");
+
+      this.show(title, buttons, addCancelButtonWithLabel,
+          androidEnableCancelButton, addDestructiveButtonWithLabel,
+          callbackContext);
+      // need to return as this call is async.
+      return true;
     }
+    return false;
+  }
 
-    boolean onContextItemSelected(MenuItem item) {
-        try {
-            JSONObject result = new JSONObject();
-            result.put("buttonIndex", item.getItemId());
-            callbackContext.success(result);
-            return true;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+  public synchronized void show(final String title,
+                                final JSONArray buttonLabels,
+                                final String addCancelButtonWithLabel,
+                                final boolean androidEnableCancelButton,
+                                final String addDestructiveButtonWithLabel,
+                                final CallbackContext callbackContext) {
+
+    final CordovaInterface cordova = this.cordova;
+
+    Runnable runnable = new Runnable() {
+      public void run() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(cordova.getActivity());
+
+        builder
+            .setTitle(title)
+            .setCancelable(true);
+
+
+        // Although there is not really anything technically wrong
+        // with adding a cancel button, Android typically doesn't use
+        // one for this kind of list dialog.
+        // We'll allow the user to override the "smart" option and
+        // include it if they insist anyway.
+
+        if (androidEnableCancelButton && !TextUtils.isEmpty(addCancelButtonWithLabel)) {
+          builder.setNegativeButton(addCancelButtonWithLabel,
+              new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  dialog.cancel();
+                  // We catch the cancel event and return
+                  // the index then.
+                }
+              });
         }
+
+        // So what do we do with the iOS destructive button?
+        // Android doesn't really have the concept, so we're going to
+        // ignore it until we have a situation where we can come up with
+        // a good way to implement it. Most likely adding an image
+        // or some other indicator.
+//        if (!TextUtils.isEmpty(addDestructiveButtonWithLabel)) {
+//          builder.setPositiveButton(addDestructiveButtonWithLabel,
+//              new OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                  dialog.dismiss();
+//                  callbackContext
+//                      .sendPluginResult(new PluginResult(
+//                          PluginResult.Status.OK, 0));
+//                }
+//              });
+//        }
+
+        final String[] buttons = getStringArray(
+            buttonLabels,
+            (TextUtils.isEmpty(addDestructiveButtonWithLabel) ? null
+                : addDestructiveButtonWithLabel));
+
+        builder.setItems(buttons, new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            // java 0 based index converted to cordova 1 based
+            // index, so we don't confuse the webbies.
+            callbackContext.sendPluginResult(new PluginResult(
+                PluginResult.Status.OK, which + 1));
+          }
+        });
+
+        builder.setOnCancelListener(new AlertDialog.OnCancelListener() {
+          public void onCancel(DialogInterface dialog) {
+            // Match the way the iOS plugin works. Cancel is
+            // always the last index and destructive is always the
+            // first, if it exists. Even though we don't handle the
+            // destructive button, we want the selected index to
+            // match.
+            int cancelButtonIndex = buttons.length + 1;
+            callbackContext.sendPluginResult(new PluginResult(
+                PluginResult.Status.OK, cancelButtonIndex));
+          }
+        });
+
+        builder.create().show();
+      }
+    };
+    this.cordova.getActivity().runOnUiThread(runnable);
+  }
+
+  private String[] getStringArray(JSONArray jsonArray, String... prepend) {
+
+    List<String> btn = new ArrayList<String>();
+
+    // Add prefix items like destructive buttons.
+    for (String aPrepend : prepend) {
+      if (!TextUtils.isEmpty(aPrepend)) {
+        btn.add(aPrepend);
+      }
     }
 
-    boolean onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        try {
-            menu.setHeaderTitle(options.getString("title"));
-            JSONArray labels = options.getJSONArray("items");
-            int cancelIndex = options.getInt("cancelButtonIndex");
-            for(int i = 0; i < labels.length(); i++) {
-              if (i == cancelIndex) continue;
-              menu.add(Menu.NONE, i, i, labels.getString(i));
-            }
-            return true;
-        } catch (JSONException e) {
-            // should never happen, we get the JSON from Cordova
-            throw new RuntimeException(e);
-        }
-    }
+    // add the rest of the buttons from the list.
+    if (jsonArray != null) {
+      for (int i = 0; i < jsonArray.length(); i++) {
+        btn.add(jsonArray.optString(i));
+      }
 
-    boolean onContextMenuClosed(Menu menu) {
-        return true;
     }
+    return btn.toArray(new String[btn.size()]);
+  }
 }
