@@ -116,8 +116,11 @@ public class ActionSheet extends CordovaPlugin {
           public void onClick(DialogInterface dialog, int which) {
             // java 0 based index converted to cordova 1 based
             // index, so we don't confuse the webbies.
+            JSONObject json = new JSONObject();
+            json.put("buttonIndex", wich);
+
             callbackContext.sendPluginResult(new PluginResult(
-                PluginResult.Status.OK, which ));
+                PluginResult.Status.OK, json));
           }
         });
 
