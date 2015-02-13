@@ -117,7 +117,10 @@ public class ActionSheet extends CordovaPlugin {
             // java 0 based index converted to cordova 1 based
             // index, so we don't confuse the webbies.
             JSONObject json = new JSONObject();
-            json.put("buttonIndex", which);
+            try {
+              json.put("buttonIndex", which);
+            } catch (JSONException e) {
+            }
 
             callbackContext.sendPluginResult(new PluginResult(
                 PluginResult.Status.OK, json));
